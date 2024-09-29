@@ -249,6 +249,7 @@ v3.8.5:
 
 
 #include <Arduino.h>
+#include <stdio.h>
 
 #ifdef _TASK_DEFINE_MILLIS
 extern "C" {
@@ -693,6 +694,10 @@ void Task::yieldOnce (TaskCallback aCallback) {
  *  and resets the RunCounter back to zero
  */
 bool Task::enable() {
+    void *caller = __builtin_return_address(1);
+    if (iIterations < 1 && !iInterval) {
+        printf("@%p: task set to immediate execution (iterations: %d)\n", caller, iIterations);
+    }
     if (iScheduler) { // activation without active scheduler does not make sense
 
 #ifdef _TASK_THREAD_SAFE
